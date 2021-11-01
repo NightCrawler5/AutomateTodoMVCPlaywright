@@ -1,6 +1,7 @@
 {
     "ToDoItems":{
         "ToDoItems":"Selenium,Appium,API,AI,ML",
-        "Link":"https://todomvc.com/examples/react/#/"
+        "Link":"https://todomvc.com/examples/react/#/",
+        "RemoveItems":"API,AI,ML"
     }
 }
