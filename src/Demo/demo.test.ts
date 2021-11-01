@@ -1,5 +1,6 @@
 import { chromium, Page, BrowserContext, Browser } from 'playwright';
 import DemoPage from '../../page/demo-page';
+import * as data from "../../data/data.json";
 
 let page: Page;
 let context: BrowserContext;
@@ -55,9 +56,13 @@ let demo:DemoPage;
                 .story("Add To Do Items");
             await reporter.startStep("Click and add to do items.");
             await demo.AddToDoItems();
-            await reporter.endStep();
             const TotalItemsAdded = (await page.$$(demo.ListOfToDoItems)).length;
             console.log("All Items Added Are : " + TotalItemsAdded);
+            let splitFilters: Array<string> = data.ToDoItems.ToDoItems.split(',');
+            expect(TotalItemsAdded).toEqual(splitFilters.length);
+            console.info('Total Items Added : ' + TotalItemsAdded);
+            console.info('Total Items in JSON : ' + splitFilters.length);
+            await reporter.endStep();
         }
         catch(e){
             console.log((e as Error).message);
@@ -96,6 +101,26 @@ let demo:DemoPage;
             console.log((e as Error).message);
         }
         
+    });
+
+    test('Remove Item', async () => {
+        try {
+            await reporter
+                .description("TC_01")
+                .story("Add To Do Items");
+            await reporter.startStep("Remove Item");
+            await demo.clickEle(demo.AllLink, page);
+            await demo.RemoveItem();
+            await page.waitForLoadState('domcontentloaded');
+            const TotalItemsAfter = (await page.$$(demo.ListOfToDoItems)).length;
+            let splitTobeAdded: Array<string> = data.ToDoItems.ToDoItems.split(',');
+            let splitToBeRemoved: Array<string> = data.ToDoItems.RemoveItems.split(',');
+            const TotalThatShouldBeDisplayed = splitTobeAdded.length - splitToBeRemoved.length;
+            expect(TotalThatShouldBeDisplayed).toEqual(TotalItemsAfter);
+            await reporter.endStep();
+        } catch (e) {
+            console.info((e as Error).message)
+        }
     });
 
     afterAll(async() => {
