@@ -1,5 +1,5 @@
 import type { Page } from 'playwright';
-import * as data from "../data/data.json"
+import * as data from "../data/data.json";
 
 export default class DemoPage {
     
@@ -26,8 +26,11 @@ export default class DemoPage {
 
     CompletedLink = 'a[href="#/completed"]';
 
+    AllLink = 'a[href="#/"]';
+
     ListOfActiveItems = '//ul[@class="todo-list"]/child::li[@class = ""]';
 
+    ItemToBeRemoved = '//*[text() = "AI"]';
     //#endregion
 
     //#region Implementation
@@ -48,5 +51,13 @@ export default class DemoPage {
         }
     }
 
+    async RemoveItem(){
+        let splitFilters: Array<string> = data.ToDoItems.RemoveItems.split(',');
+        for(const toDo in splitFilters){
+            await this.page.hover('//*[text()="' + splitFilters[toDo] + '"]');
+            await this.page.waitForSelector('//*[text()="' + splitFilters[toDo] + '"]' + '/following-sibling::button[@class = "destroy"]');
+            await this.clickEle('//*[text()="' + splitFilters[toDo] + '"]' + '/following-sibling::button[@class = "destroy"]', this.page);    
+        }
+    }
     //#endregion
 }
